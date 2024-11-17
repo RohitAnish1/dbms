@@ -1,0 +1,29 @@
+CREATE TABLE EMPLOYEE(
+  emp_name VARCHAR2(20),
+  emp_salary NUMBER(20)
+);
+
+INSERT INTO EMPLOYEE(emp_name,emp_salary) VALUES
+('Rohit',10000);
+INSERT INTO EMPLOYEE(emp_name,emp_salary) VALUES
+('Roshin',20000);
+INSERT INTO EMPLOYEE(emp_name,emp_salary) VALUES
+('Ashlin',30000);
+
+DECLARE
+c_name EMPLOYEE.emp_name%TYPE;
+c_salary EMPLOYEE.emp_salary%TYPE;
+CURSOR f_salary IS 
+SELECT emp_salary,emp_name from EMPLOYEE
+ORDER BY emp_salary DESC
+FETCH FIRST 2 ROWS ONLY;
+BEGIN
+OPEN f_salary;
+LOOP
+FETCH f_salary INTO c_salary,c_name;
+EXIT WHEN f_salary%NOTFOUND;
+DBMS_OUTPUT.PUT_LINE('Name: '||c_name||'Salary '||c_salary);
+END LOOP;
+CLOSE f_salary;
+END;
+/

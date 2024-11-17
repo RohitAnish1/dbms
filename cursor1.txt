@@ -1,0 +1,25 @@
+CREATE TABLE SalariedWorker(
+  worked_id INT,
+  name VARCHAR2(20),
+  salary NUMBER(20),
+  tax FLOAT
+);
+
+DECLARE
+CURSOR tax_calc IS
+SELECT salary,worker_id
+FROM SalariedWorker;
+v_worker_id IN SalariedWorker.worker_id%TYPE;
+v_salary IN SalariedWorker.salary%TYPE;
+v_tax IN SalariedWorker.tax%TYPE;
+BEGIN
+OPEN tax_calc;
+LOOP
+FETCH tax_calc INTO v_worker_id,v_salary;
+IF v_salary <= 5000 THEN
+v_tax := 0;
+WHERE c_salary = salary;
+ELSIF c_salary <= 8000 AND c_salary > 5000 THEN
+UPDATE SalariedWorker
+SET tax = 0.05
+WHERE c_salary = salary;

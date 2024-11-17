@@ -1,0 +1,16 @@
+CREATE TABLE staff(
+  staff_name VARCHAR2(20) NOT NULL,
+  staff_id INT NOT NULL,
+  department VARCHAR(20) NOT NULL,
+  age INT NOT NULL CHECK(age > 35 AND age < 75)
+);
+
+INSERT INTO staff(staff_name,staff_id,department,age) VALUES
+('Binu VP',1,'CS',50)
+;
+INSERT INTO staff(staff_name,staff_id,department,age) VALUES
+('Bindu',1,'EC',45)
+;
+INSERT INTO staff(staff_name,staff_id,department,age) VALUES
+('Shoba',1,'ME',55)
+;

@@ -1,0 +1,76 @@
+CREATE TABLE Book(
+ accession_no INT PRIMARY KEY,
+ title VARCHAR2(20),
+ year DATE
+);
+
+CREATE TABLE Member(
+  member_id INT PRIMARY KEY,
+  name VARCHAR2(20),
+  no_of_books_issued INT,
+  max_limit INT
+);
+
+CREATE TABLE Book_issue(
+  accession_no INT,
+  member_id INT,
+  date_of_issue DATE,
+  PRIMARY KEY(accession_no,member_id),
+  FOREIGN KEY(accession_no) REFERENCES Book(accession_no),
+  FOREIGN KEY(member_id) REFERENCES Member(member_id)
+);
+
+CREATE OR REPLACE PROCEDURE issue_book(
+p_access_no IN Book.accession_no%TYPE,
+p_member_id IN Member.member_id%TYPE,
+p_date_of_issue IN Book_issue.date_of_issue%TYPE
+) IS
+v_book_status Book.status%TYPE;
+v_books_issued Member.no_of_books_issued%TYPE;
+v_max_limit Member.max_limit%TYPE;
+BEGIN
+SELECT status INTO v_book_status
+FROM Book
+WHERE accession_no = p_access_no;
+IF v_book_status = 'issued' THEN
+DBMS_OUTPUT.PUT_LINE('Already Issued');
+RETURN;
+END IF;
+SELECT max_limit,no_of_books_issued INTO v_max_limit,v_books_issued
+FROM Member
+WHERE member_id = p_member_id;
+IF v_books_issued >= v_max_limit THEN
+DBMS_OUTPUT.PUT_LINE('No more Books can be issued');
+RETURN;
+END IF;
+UPDATE BOOK
+SET status = 'issued'
+WHERE accession_no = p_access_no;
+INSERT INTO Book_issue(accession_no,member_id,date_of_issue)
+VALUES(p_access_no,p_member_id,p_date_of_issue);
+UPDATE MEMBER
+SET no_of_books_issued = v_books_issued + 1
+WHERE member_id = p_member_id;
+DBMS_OUTPUT.PUT_LINE('Issued Successfully');
+END issue_book;
+/
+
+Write a PL/SQL procedure to issue the book.
+Write a trigger to set the status of students to "back listed" if they have taken book but not
+returned even after one year
+
+CREATE OR REPLACE TRIGGER not_returned
+BEFORE INSERT OR UPDATE ON Book_issue
+FOR EACH ROW 
+BEGIN
+IF EXTRACT(YEAR FROM :NEW.date_of_issue) > EXTRACT(YEAR FROM SYSDATE)+1 THEN
+UPDATE Book
+SET status = 'Blacklisted'
+WHERE accession_no = :NEW.accession_no;
+END IF;
+END not_returned;
+/
+
+
+
+ 

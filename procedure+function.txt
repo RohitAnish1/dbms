@@ -1,0 +1,55 @@
+CREATE TABLE Products(
+ product_id INT PRIMARY KEY,
+ product_name VARCHAR(20) NOT NULL,
+ price BIGINT,
+ category VARCHAR(20),
+ stock_quantity INT
+);
+
+INSERT INTO Products(product_id,product_name,price,category,stock_quantity) VALUES
+  (1,'Shirt',2000,'Clothes',100),
+  (2,'Jeans','1500','Clothes',200),
+  (3,'Bottle',200,'Utensils',10)
+;
+
+SELECT product_name from Products 
+WHERE price > 100;
+
+UPDATE Products
+SET category='Apparel'
+WHERE product_name='Jeans';
+
+CREATE TABLE Employee(
+ emp_id INT,
+ emp_name VARCHAR2(20),
+ emp_salary NUMBER(10)
+);
+
+CREATE OR REPLACE PROCEDURE add_emp(
+  p_id IN INT,
+  p_name IN VARCHAR2,
+  p_salary IN NUMBER)
+AS
+BEGIN
+INSERT INTO Employee(emp_id,emp_name,emp_salary) VALUES(p_id,p_name,p_salary);
+END add_emp;
+/
+
+EXECUTE add_emp(1,'Rohit',30000);
+
+CREATE OR REPLACE FUNCTION total_salary
+ RETURN NUMBER
+ AS total NUMBER(10) := 0;
+ BEGIN
+ SELECT SUM(emp_salary) INTO total from Employee;
+ RETURN total;
+END;
+/
+
+DECLARE
+c NUMBER(10);
+BEGIN
+c := total_salary();
+DBMS_OUTPUT.PUT_LINE('The total salary is'|| c);
+END;
+/

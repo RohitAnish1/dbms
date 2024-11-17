@@ -1,0 +1,46 @@
+CREATE TABLE Item(
+ item_id INT PRIMARY KEY,
+ it_name VARCHAR(20),
+ unit_price NUMBER(10)
+);
+
+CREATE TABLE Stock(
+ st_no INT,
+ item_id INT,
+ no_of_pieces INT PRIMARY KEY,
+ FOREIGN KEY(item_id) REFERENCES Item(item_id)
+);
+
+CREATE TABLE Transactions(
+  tr_id INT PRIMARY KEY,
+  type VARCHAR2(20),
+  tr_date DATE DEFAULT SYSDATE,
+  item_id INT,
+  no_of_pieces INT,
+  FOREIGN KEY(item_id) REFERENCES Item(item_id),
+  FOREIGN KEY(no_of_pieces) REFERENCES Stock(no_of_pieces)
+);
+
+CREATE OR REPLACE PROCEDURE update_stock(
+  p_id IN Transactions.tr_id%TYPE,
+  p_type IN Transactions.type%TYPE,
+  p_itemid IN Transactions.item_id%TYPE,
+  p_no_of_pieces IN Transactions.no_of_pieces%TYPE
+) AS
+  v_no_of_pieces Stock.no_of_pieces%TYPE;
+BEGIN
+   SELECT no_of_pieces
+   INTO v_no_of_pieces
+   FROM Stock
+   WHERE item_id = p_itemid;
+IF p_type = 'Purchase' THEN
+    UPDATE Stock
+    SET no_of_pieces =  v_no_of_pieces + p_no_of_pieces 
+    WHERE item_id = p_itemid;
+ELSIF p_type = 'Sales' THEN
+    UPDATE Stock
+    SET no_of_pieces =  v_no_of_pieces - p_no_of_pieces 
+    WHERE item_id = p_itemid;
+END IF;
+END;
+/

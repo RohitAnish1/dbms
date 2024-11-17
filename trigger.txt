@@ -1,0 +1,16 @@
+CREATE TABLE Book(
+ accession_no INT,
+ publisher VARCHAR2(20),
+ publication_date DATE,
+ status VARCHAR(20)
+);
+
+CREATE OR REPLACE TRIGGER issue_trigger
+BEFORE INSERT OR UPDATE OF publication_date ON Book
+FOR EACH ROW
+BEGIN
+IF EXTRACT(YEAR FROM :NEW.publication_date) <= EXTRACT(YEAR FROM SYSDATE) - 20 THEN
+:NEW.status :='Cant be issues';
+END IF;
+END;
+/
